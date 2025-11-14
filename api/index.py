@@ -1,11 +1,18 @@
 from fastapi import FastAPI, HTTPException
 import httpx
 import uvicorn
+import re
 
 app = FastAPI(docs_url="/api/py/docs", openapi_url="/api/py/openapi.json")
 
 EXTRACT_URL = 'https://memory-alpha.fandom.com/api.php?action=query&prop=extracts&exsentences=10&explaintext=1&format=json'
-IMAGES_URL = 'https://memory-alpha.fandom.com/api.php?action=query&generator=images&prop=imageinfo|images&imlimit=max&iiprop=url&format=json'
+IMAGES_URL = 'https://memory-alpha.fandom.com/api.php?action=query&generator=images&prop=imageinfo|images&gimlimit=max&iiprop=url&format=json'
+
+# Map personnel from their page title prop to how their name appears in image filenames
+PERSONNEL_MAP = {
+  "Jean-Luc_Picard": "Jean-Luc Picard",
+  "William_T._Riker": "William Riker",
+}
 
 @app.get("/api/py/extract")
 async def get_extract(title: str):
@@ -16,12 +23,19 @@ async def get_extract(title: str):
     except Exception as e:
       return e
 
-@app.get("/api/py/images")
-async def get_images(title: str):
+@app.get("/api/py/personnel-images")
+async def get_personnel_images(title: str):
   async with httpx.AsyncClient() as client:
     try:
       response = await client.get(IMAGES_URL + f"&titles={title}")
-      return response.json()
+      json = response.json()
+      pages = json.get("query", {"pages": {}}).get("pages", {})
+      images = []
+      for _, (_, value) in enumerate(pages.items()):
+        if re.search(f"File:{PERSONNEL_MAP[title]}.*.jpg", value.get("title")):
+          imageinfo = value.get("imageinfo")[0]
+          images.append(imageinfo.get("url"))
+      return { "personnel-images": images }
     except Exception as e:
       raise HTTPException(status_code=400)
 
