@@ -19,7 +19,10 @@ async def get_extract(title: str):
   async with httpx.AsyncClient() as client:
     try:
       response = await client.get(EXTRACT_URL + f"&titles={title}")
-      return response.json()
+      json = response.json()
+      pages = json.get("query", {"pages": {}}).get("pages", {})
+      for _, (_, value) in enumerate(pages.items()):
+        return { "extract": value.get("extract") }
     except Exception as e:
       return e
 
@@ -34,8 +37,8 @@ async def get_personnel_images(title: str):
       for _, (_, value) in enumerate(pages.items()):
         if re.search(f"File:{PERSONNEL_MAP[title]}.*.jpg", value.get("title")):
           imageinfo = value.get("imageinfo")[0]
-          images.append(imageinfo.get("url"))
-      return { "personnel-images": images }
+          images.append(imageinfo.get("url").replace("//static", "//vignette"))
+      return { "personnelImages": images }
     except Exception as e:
       raise HTTPException(status_code=400)
 
