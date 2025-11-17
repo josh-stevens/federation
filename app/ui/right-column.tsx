@@ -33,6 +33,7 @@ export default function RightColumn({
       ref.current.onended = () => {
         redirect(url)
       }
+      console.log(ref.current)
       ref.current.play()
     }
   }

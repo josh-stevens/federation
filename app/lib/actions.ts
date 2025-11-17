@@ -1,30 +1,17 @@
 'use server';
 
-interface PicardResponse {
+interface PersonnelResponse {
   extract: string;
   personnelImages: Array<string>;
 }
 
-// TODO: parameterize and use BASE_URL
+// TODO: parameterize and use BASE_URL from env
 // TODO: error handling
-export async function fetchPicard(): Promise<PicardResponse> {
-  const extractFetch = fetch("http://localhost:3000/api/py/extract?title=Jean-Luc_Picard");
-  const imagesFetch = fetch("http://localhost:3000/api/py/personnel-images?title=Jean-Luc_Picard");
+export async function fetchPersonnel(personnel: string): Promise<PersonnelResponse> {
+  const extractFetch = fetch(`http://localhost:3000/api/py/extract?title=${personnel}`);
+  const imagesFetch = fetch(`http://localhost:3000/api/py/personnel-images?title=${personnel}`);
   const responses = await Promise.all([extractFetch, imagesFetch]);
   const jsonResponses = await Promise.all(responses.map(response => response.json()));
-  console.log(jsonResponses[1].personnelImages)
-  return {
-    "extract": jsonResponses[0].extract,
-    "personnelImages": jsonResponses[1].personnelImages
-  };
-}
-
-export async function fetchRiker(): Promise<PicardResponse> {
-  const extractFetch = fetch("http://localhost:3000/api/py/extract?title=William_T._Riker");
-  const imagesFetch = fetch("http://localhost:3000/api/py/personnel-images?title=William_T._Riker");
-  const responses = await Promise.all([extractFetch, imagesFetch]);
-  const jsonResponses = await Promise.all(responses.map(response => response.json()));
-  console.log(jsonResponses[1].personnelImages)
   return {
     "extract": jsonResponses[0].extract,
     "personnelImages": jsonResponses[1].personnelImages

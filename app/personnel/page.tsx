@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 
-export default function Personnel() {
+export default function Personnel({ }) {
   const beep3 = new Audio("/beep3.mp3");
 
   function playSound(url: string) {

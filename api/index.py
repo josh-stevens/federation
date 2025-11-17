@@ -12,6 +12,16 @@ IMAGES_URL = 'https://memory-alpha.fandom.com/api.php?action=query&generator=ima
 PERSONNEL_MAP = {
   "Jean-Luc_Picard": "Jean-Luc Picard",
   "William_T._Riker": "William Riker",
+  "Geordi_La_Forge": "Geordi La Forge",
+  "Natasha_Yar": "Natasha Yar",
+  "Worf": "Worf",
+  "Beverly_Crusher": "Beverly Crusher",
+  "Deanna_Troi": "Deanna Troi",
+  "Data": "Data",
+  "Wesley_Crusher": "Wesley Crusher",
+  "Miles_O'Brien": "Miles O'Brien",
+  "Katherine_Pulaski": "Katherine Pulaski",
+  "Ro_Laren": "Ro Laren"
 }
 
 @app.get("/api/py/extract")
